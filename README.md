@@ -4,8 +4,9 @@ Bring your own Arduino prop code into Escape Director. Keep your puzzle logic;
 the SDK connects its state, commands and completion signals to the Room.
 
 It isn't limited to two boards. Adapters for the Arduino UNO R4 WiFi and GIGA
-R1 WiFi are included, and other boards with USB, Wi-Fi and enough memory can
-use the SDK through a small [board adapter](BOARD_PORTING.md). The SDK is free
+R1 WiFi are included, other Arduino boards with USB, Wi-Fi and enough memory
+can use the SDK through a small [board adapter](BOARD_PORTING.md), and other
+platforms can speak its [MQTT protocol](protocol.md) directly. The SDK is free
 to use and change under the [MIT License](#license).
 
 Not writing firmware? A prop that already sends MQTT or HTTP messages doesn't
