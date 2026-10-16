@@ -48,6 +48,7 @@ development only; your controller does not run Node.
 | Check versions and support limits | [Compatibility](docs/compatibility.md) |
 | Wire protocol (SDK maintainers) | [Protocol](protocol.md) |
 | Contribute or build a download | [Contributing](CONTRIBUTING.md) |
+| Report a security problem | [Security policy](SECURITY.md) |
 
 The SDK is for show control. It is not a safety controller; keep emergency exits,
 safety interlocks and other life-safety functions independent. Test on a spare
