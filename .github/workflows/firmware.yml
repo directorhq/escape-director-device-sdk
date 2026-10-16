@@ -28,10 +28,12 @@ jobs:
           BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
           HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
-          # A new branch or an unknown base compiles everything.
+          # A new branch or an unknown base compiles everything. Three dots compare
+          # from the merge base, so newer commits on main do not count, and
+          # --no-renames lists both sides of a rename.
           if ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
             echo "code=true" >> "$GITHUB_OUTPUT"
-          elif git diff --name-only "$BASE" "$HEAD" | grep -qv '\.md$'; then
+          elif git diff --no-renames --name-only "$BASE...$HEAD" | grep -qv '\.md$'; then
             echo "code=true" >> "$GITHUB_OUTPUT"
           else
             echo "code=false" >> "$GITHUB_OUTPUT"
