@@ -15,16 +15,20 @@ concurrency:
 jobs:
   # Compiles the sketches for each bundled adapter with the baseline versions in
   # docs/compatibility.md. Compilation is not hardware qualification.
+  # A fixed job name keeps the required check stable when a core version changes.
   firmware:
+    name: firmware (${{ matrix.board }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         include:
-          - core: arduino:renesas_uno@1.5.3
+          - board: uno-r4-wifi
+            core: arduino:renesas_uno@1.5.3
             fqbn: arduino:renesas_uno:unor4wifi
-          - core: arduino:mbed_giga@4.6.0
+          - board: giga
+            core: arduino:mbed_giga@4.6.0
             fqbn: arduino:mbed_giga:giga
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
