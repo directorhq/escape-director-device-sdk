@@ -33,7 +33,10 @@ jobs:
           # --no-renames lists both sides of a rename.
           if ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
             echo "code=true" >> "$GITHUB_OUTPUT"
-          elif git diff --no-renames --name-only "$BASE...$HEAD" | grep -qv '\.md$'; then
+          elif ! git diff --no-renames --name-only "$BASE...$HEAD" > "$RUNNER_TEMP/changed-paths"; then
+            # No merge base (a force push onto unrelated history): compile.
+            echo "code=true" >> "$GITHUB_OUTPUT"
+          elif grep -qv '\.md$' "$RUNNER_TEMP/changed-paths"; then
             echo "code=true" >> "$GITHUB_OUTPUT"
           else
             echo "code=false" >> "$GITHUB_OUTPUT"
