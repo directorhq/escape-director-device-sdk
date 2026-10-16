@@ -1,11 +1,8 @@
 name: Firmware compile
 on:
-  # A change to Markdown alone cannot change what the sketches compile to.
   push:
     branches: [main]
-    paths-ignore: ["**.md"]
   pull_request:
-    paths-ignore: ["**.md"]
 permissions:
   contents: read
 concurrency:
@@ -13,9 +10,39 @@ concurrency:
   group: firmware-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  # A change to Markdown alone cannot change what the sketches compile to, so
+  # compile is skipped when only Markdown changed. The workflow itself still
+  # runs, so the required "firmware" check always reports.
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      code: ${{ steps.diff.outputs.code }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: diff
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          # A new branch or an unknown base compiles everything.
+          if ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+          elif git diff --name-only "$BASE" "$HEAD" | grep -qv '\.md$'; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "code=false" >> "$GITHUB_OUTPUT"
+          fi
+
   # Compiles the sketches for each bundled adapter with the baseline versions in
   # docs/compatibility.md. Compilation is not hardware qualification.
-  firmware:
+  compile:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    name: compile (${{ matrix.fqbn }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
@@ -40,3 +67,17 @@ jobs:
       - run: arduino-cli lib install ArduinoJson@7.4.3 ArduinoMqttClient@0.1.8
       - run: arduino-cli compile --warnings default --fqbn ${{ matrix.fqbn }} --library . examples/room_basic
       - run: arduino-cli compile --warnings default --fqbn ${{ matrix.fqbn }} --library . examples/button_code
+
+  # The one required check: its name stays the same when core versions change.
+  firmware:
+    needs: [changes, compile]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - env:
+          CHANGES: ${{ needs.changes.result }}
+          COMPILE: ${{ needs.compile.result }}
+        run: |
+          echo "changes: $CHANGES, compile: $COMPILE"
+          [ "$CHANGES" = success ] && { [ "$COMPILE" = success ] || [ "$COMPILE" = skipped ]; }
