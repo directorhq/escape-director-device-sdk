@@ -1,0 +1,88 @@
+name: Firmware compile
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  # A newer push to the same pull request or branch cancels the older run.
+  group: firmware-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  # A change to Markdown alone cannot change what the sketches compile to, so
+  # compile is skipped when only Markdown changed. The workflow itself still
+  # runs, so the required "firmware" check always reports.
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      code: ${{ steps.diff.outputs.code }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: diff
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          # A new branch or an unknown base compiles everything. Three dots compare
+          # from the merge base, so newer commits on main do not count, and
+          # --no-renames lists both sides of a rename.
+          if ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+          elif ! git diff --no-renames --name-only "$BASE...$HEAD" > "$RUNNER_TEMP/changed-paths"; then
+            # No merge base (a force push onto unrelated history): compile.
+            echo "code=true" >> "$GITHUB_OUTPUT"
+          elif grep -qv '\.md$' "$RUNNER_TEMP/changed-paths"; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "code=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # Compiles the sketches for each bundled adapter with the baseline versions in
+  # docs/compatibility.md. Compilation is not hardware qualification.
+  compile:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    name: compile (${{ matrix.fqbn }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - core: arduino:renesas_uno@1.5.3
+            fqbn: arduino:renesas_uno:unor4wifi
+          - core: arduino:mbed_giga@4.6.0
+            fqbn: arduino:mbed_giga:giga
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: arduino/setup-arduino-cli@81d310742121c928ea9c8bbd407b4217b432ae02 # v2.0.0
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.arduino15
+          key: arduino-${{ matrix.core }}-ArduinoJson-7.4.3-ArduinoMqttClient-0.1.8
+      - run: arduino-cli core update-index
+      - run: arduino-cli core install ${{ matrix.core }}
+      - run: arduino-cli lib install ArduinoJson@7.4.3 ArduinoMqttClient@0.1.8
+      - run: arduino-cli compile --warnings default --fqbn ${{ matrix.fqbn }} --library . examples/room_basic
+      - run: arduino-cli compile --warnings default --fqbn ${{ matrix.fqbn }} --library . examples/button_code
+
+  # The one required check: its name stays the same when core versions change.
+  firmware:
+    needs: [changes, compile]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - env:
+          CHANGES: ${{ needs.changes.result }}
+          COMPILE: ${{ needs.compile.result }}
+        run: |
+          echo "changes: $CHANGES, compile: $COMPILE"
+          [ "$CHANGES" = success ] && { [ "$COMPILE" = success ] || [ "$COMPILE" = skipped ]; }
