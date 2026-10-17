@@ -70,8 +70,9 @@ paired, pass its existing prop UUID: `room.prop("fuses", "Fuse panel", "<uuid>")
    Printing is fine; never print lines that start with `{`.
 2. **Mind 32 KB of RAM on the UNO R4.** Avoid `String` building in the loop,
    large buffers and large `JsonDocument`s.
-3. **Limits.** Per Room: 8 props by default (`ed::BasicRoom<Props, Entries,
-   Details>` raises capacities). Per prop: 8 signals, 8 commands, 16 state
+3. **Limits.** Per Room: up to 8 props. `ed::BasicRoom<Props, Entries,
+   Details>` can raise entry and detail capacity, or lower `Props` to save RAM,
+   but a Room never takes more than 8 props. Per prop: 8 signals, 8 commands, 16 state
    fields. IDs: lowercase letters, digits and hyphens, starting with a letter,
    at most 40 characters. `room.begin()` rejects a declaration that breaks a
    rule and prints why on USB serial.
@@ -122,6 +123,7 @@ sleep 20 | arduino-cli monitor -p <port> --config baudrate=115200 --quiet
   needs the USB port during setup.
 
 To change the SDK itself, run `npm ci` and `npm run check` in this repository.
+Pull request descriptions follow `.github/PULL_REQUEST_TEMPLATE.md`; fill every section.
 
 ## Hand off to a person
 
