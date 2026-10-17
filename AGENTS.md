@@ -123,6 +123,7 @@ sleep 20 | arduino-cli monitor -p <port> --config baudrate=115200 --quiet
   needs the USB port during setup.
 
 To change the SDK itself, run `npm ci` and `npm run check` in this repository.
+Pull request descriptions follow `.github/PULL_REQUEST_TEMPLATE.md`; fill every section.
 
 ## Hand off to a person
 
