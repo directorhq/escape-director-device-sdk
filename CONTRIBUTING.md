@@ -27,7 +27,8 @@ npm run check
 The tests require a C++17 compiler (`c++` by default; set `CXX` to a compatible
 compiler executable). On Windows use a suitable Clang/MinGW environment; MSVC's
 command-line flags are not supported by this runner. Firmware compilation uses
-Arduino CLI and the versions pinned in `.github/workflows/firmware.yml`. `npm test` also
+Arduino CLI and the core and library versions in
+[Supported boards and limits](https://docs.escapedirector.com/developers/supported-boards). `npm test` also
 needs ArduinoJson's headers (installed with the Arduino IDE, or set
 `ARDUINOJSON_SRC`). CI compiles both examples for both bundled boards; run the
 same commands locally when shared code changes. When you report a hardware
