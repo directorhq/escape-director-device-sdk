@@ -139,7 +139,8 @@ public:
 #ifdef ED_BUNDLED_BOARD
   bool begin() { return begin(detail::defaultBoard()); }
 #endif
-  // For a board without a bundled adapter (see BOARD_PORTING.md). Keep board
+  // For a board without a bundled adapter (see "Add a board adapter" in the
+  // docs' Developers section). Keep board
   // alive for the whole sketch.
   bool begin(BoardAdapter &board);
   void loop();

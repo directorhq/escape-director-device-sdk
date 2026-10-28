@@ -42,8 +42,8 @@ jobs:
             echo "code=false" >> "$GITHUB_OUTPUT"
           fi
 
-  # Compiles the sketches for each bundled adapter with the baseline versions in
-  # docs/compatibility.md. Compilation is not hardware qualification.
+  # Compiles the sketches for each bundled adapter with the baseline versions
+  # listed under Supported boards in the docs. Compilation is not hardware qualification.
   compile:
     needs: changes
     if: needs.changes.outputs.code == 'true'

@@ -14,7 +14,7 @@ if (!readFileSync(join(root,'library.properties'),'utf8').includes(`version=${ve
 const sources=['EscapeDirectorRoom.h','EscapeDirectorRoom.cpp','RoomRegistry.h','EscapeDirector.h','EscapeDirector.cpp','CompactAllocation.h','BoardAdapter.h','boards/GigaBoard.cpp','boards/GigaTls.h','boards/UnoR4Board.cpp','boards/PairingSlots.h','CommandWindow.h','NetworkRetry.h','StationAddress.h','StationClock.h','SerialJsonLine.h'];
 const examples=['examples/room_basic/room_basic.ino','examples/button_code/button_code.ino'];
 const libraryFiles=['library.properties','LICENSE','TRADEMARKS.md','THIRD_PARTY.md',...sources.map(f=>`src/${f}`),...examples];
-const documents=['.gitignore','README.md','GETTING_STARTED.md','BOARD_PORTING.md','protocol.md','description.schema.json','AGENTS.md','CLAUDE.md','LICENSE','TRADEMARKS.md','THIRD_PARTY.md','CONTRIBUTING.md','SECURITY.md','docs/compatibility.md','docs/agent-integration.md','docs/room-api.md'];
+const documents=['.gitignore','README.md','protocol.md','description.schema.json','AGENTS.md','CLAUDE.md','LICENSE','TRADEMARKS.md','THIRD_PARTY.md','CONTRIBUTING.md','SECURITY.md'];
 // Every host test that scripts/test-cpp.mjs runs, so `npm run check` works in the download.
 const testList=readFileSync(join(root,'scripts/test-cpp.mjs'),'utf8').match(/for \(const name of \[([^\]]+)\]/);
 if (!testList) throw new Error('Host test list not found in scripts/test-cpp.mjs');

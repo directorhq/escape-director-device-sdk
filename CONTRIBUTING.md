@@ -4,8 +4,13 @@ Use synthetic examples and reproducible descriptions. Do not include customer
 Rooms, credentials, pairing records or production logs. For account-specific
 questions, use Escape Director support rather than an issue containing private data.
 
-Read AGENTS.md and docs/compatibility.md before changing the API. Keep one outcome
-per change, preserve stable IDs in examples, and document compatibility changes.
+Read AGENTS.md and [Supported boards and limits](https://docs.escapedirector.com/developers/supported-boards) before
+changing the API. Keep one outcome per change, preserve stable IDs in examples,
+and document compatibility changes. The guides for people live in the
+`developers/` folder of
+[escape-director-documentation](https://github.com/directorhq/escape-director-documentation);
+when a change makes one wrong, including the copied example sketches, open a
+matching pull request there.
 Contributions are accepted under the same MIT License as the rest of the
 repository (inbound = outbound). By opening a pull request you confirm that you
 wrote the change or otherwise have the right to submit it under that license.
@@ -22,7 +27,7 @@ npm run check
 The tests require a C++17 compiler (`c++` by default; set `CXX` to a compatible
 compiler executable). On Windows use a suitable Clang/MinGW environment; MSVC's
 command-line flags are not supported by this runner. Firmware compilation uses
-Arduino CLI and the pinned dependencies in GETTING_STARTED.md. `npm test` also
+Arduino CLI and the versions pinned in `.github/workflows/firmware.yml`. `npm test` also
 needs ArduinoJson's headers (installed with the Arduino IDE, or set
 `ARDUINOJSON_SRC`). CI compiles both examples for both bundled boards; run the
 same commands locally when shared code changes. When you report a hardware

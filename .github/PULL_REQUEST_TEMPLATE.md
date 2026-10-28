@@ -27,5 +27,6 @@ memory use, or supported boards. -->
 
 - [ ] The Linear ticket is linked.
 - [ ] Existing prop UUIDs and capability IDs are unchanged.
-- [ ] `docs/room-api.md` and the examples match the change.
+- [ ] The examples and the Developers pages in `escape-director-documentation`
+      match the change, or a docs pull request is linked.
 - [ ] Secrets and Wi-Fi credentials are excluded.
