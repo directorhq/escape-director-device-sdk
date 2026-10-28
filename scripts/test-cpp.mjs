@@ -8,8 +8,8 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const directory = mkdtempSync(join(tmpdir(), 'device-sdk-test-'));
 // roomApi runs the real ed::Room code against tests/host stand-ins for the
-// Arduino core. It needs ArduinoJson's headers (the version in
-// docs/compatibility.md): set ARDUINOJSON_SRC or install it with the Arduino IDE
+// Arduino core. It needs ArduinoJson's headers (the version pinned in
+// .github/workflows/firmware.yml): set ARDUINOJSON_SRC or install it with the Arduino IDE
 // or `arduino-cli lib install ArduinoJson@7.4.3`.
 const arduinoJson = [process.env.ARDUINOJSON_SRC,
   ...['Documents/Arduino', 'Arduino'].map(d => join(homedir(), d, 'libraries/ArduinoJson/src'))]

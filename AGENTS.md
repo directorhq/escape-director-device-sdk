@@ -12,9 +12,11 @@ logic. Keep working code, pin assignments, output polarity, manual overrides and
 reset behavior unless the integration requires a specific change. Work on a
 copy of a deployed sketch. Do not rewrite it into the example's puzzle.
 
-1. Read this guide, `docs/room-api.md`, `src/EscapeDirectorRoom.h` and
-   `examples/room_basic`. Keep the person's sketch under the folder containing
-   `AGENTS.md` so these instructions apply, or load this guide explicitly.
+1. Read this guide, `src/EscapeDirectorRoom.h` and `examples/room_basic`,
+   then the
+   [ed::Room reference](https://docs.escapedirector.com/developers/room-api-reference.md).
+   Keep the person's sketch under the folder containing `AGENTS.md` so these
+   instructions apply, or load this guide explicitly.
    `examples/button_code` shows a sequence across several inputs.
 2. Inspect the sketch before asking questions. Establish the exact board,
    inputs/outputs and polarity, what solves each prop, how it resets, and which
@@ -32,7 +34,8 @@ copy of a deployed sketch. Do not rewrite it into the example's puzzle.
 
 ## `ed::Room`
 
-`ed::Room` is the SDK's only sketch API. Follow `docs/room-api.md`:
+`ed::Room` is the SDK's only sketch API. Follow the
+[ed::Room reference](https://docs.escapedirector.com/developers/room-api-reference.md):
 
 - Declare props, signals, commands, state and Test behaviors in `setup()`, then
   call `room.begin()`; call `room.loop()` at the top of every `loop()`. The
@@ -85,9 +88,14 @@ paired, pass its existing prop UUID: `room.prop("fuses", "Fuse panel", "<uuid>")
 | `src/EscapeDirectorRoom.h` | `ed::Room`, `ed::Prop`, `ed::Input`: the sketch API. |
 | `examples/room_basic/room_basic.ino` | A complete one-prop sketch. |
 | `examples/button_code/button_code.ino` | A sequence puzzle: several inputs, `room.nextPress()`, `room.after()`. |
-| `docs/room-api.md` | The guide: every call, what pauses during an outage, porting checklist. |
-| `BOARD_PORTING.md` | Adding a board without a bundled adapter. |
 | `protocol.md`, `description.schema.json` | The wire protocol and generated description, for SDK maintainers. |
+
+Guides for people are in the docs' Developers section. Any page there reads
+as Markdown with `.md` added to its address, and
+`https://docs.escapedirector.com/mcp` searches them as an MCP server. Use
+[Add the SDK to your sketch](https://docs.escapedirector.com/developers/add-the-sdk-to-your-sketch.md),
+[Troubleshoot SDK firmware](https://docs.escapedirector.com/developers/troubleshoot-your-firmware.md) and, for a
+new board, [Add a board adapter](https://docs.escapedirector.com/developers/add-a-board-adapter.md).
 
 Bundled adapters: Arduino GIGA R1 WiFi (`arduino:mbed_giga:giga`) and Arduino
 UNO R4 WiFi (`arduino:renesas_uno:unor4wifi`). Other boards need an adapter.
@@ -109,11 +117,12 @@ Then, from this folder:
 ```sh
 arduino-cli compile --fqbn arduino:renesas_uno:unor4wifi --library . workspace/my_prop
 arduino-cli board list                        # find the board's port
-arduino-cli upload -p <port> --fqbn arduino:renesas_uno:unor4wifi --library . workspace/my_prop
+arduino-cli upload -p <port> --fqbn arduino:renesas_uno:unor4wifi workspace/my_prop
 sleep 20 | arduino-cli monitor -p <port> --config baudrate=115200 --quiet
 ```
 
-- Use the actual target board's FQBN (see `docs/compatibility.md`).
+- Use the actual target board's FQBN (see
+  [Supported boards](https://docs.escapedirector.com/developers/supported-boards.md)).
 - `compile` checks the code; `upload` replaces the board's sketch, so upload only
   when the person has asked you to.
 - `monitor` waits for input until it exits; piping `sleep N` into it reads USB
