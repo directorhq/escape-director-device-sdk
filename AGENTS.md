@@ -117,7 +117,7 @@ Then, from this folder:
 ```sh
 arduino-cli compile --fqbn arduino:renesas_uno:unor4wifi --library . workspace/my_prop
 arduino-cli board list                        # find the board's port
-arduino-cli upload -p <port> --fqbn arduino:renesas_uno:unor4wifi --library . workspace/my_prop
+arduino-cli upload -p <port> --fqbn arduino:renesas_uno:unor4wifi workspace/my_prop
 sleep 20 | arduino-cli monitor -p <port> --config baudrate=115200 --quiet
 ```
 
